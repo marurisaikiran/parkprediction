@@ -1,0 +1,7 @@
+{
+  "name": "Copy of Predictive Parking Space Marketplace",
+  "description": "A real-time parking prediction system that allows users to find and pre-book slots, reducing wait times and improving urban mobility. It integrates predictions, bookings, and payments into a seamless experience.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

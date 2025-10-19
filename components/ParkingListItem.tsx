@@ -41,7 +41,7 @@ export const ParkingListItem: React.FC<ParkingListItemProps> = ({ lot, onSelectL
   return (
     <motion.div 
         variants={itemVariants}
-        className={`bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden ${isHovered ? 'ring-2 ring-brand-blue' : 'ring-0 ring-transparent'}`}
+        className={`bg-white rounded-lg shadow-md transition-all duration-300 ease-in-out overflow-hidden ${isHovered ? 'ring-2 ring-brand-blue scale-[1.03] shadow-xl' : 'ring-transparent'}`}
         onMouseEnter={() => onHover(lot.id)}
         onMouseLeave={() => onHover(null)}
         layout

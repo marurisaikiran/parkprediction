@@ -6,7 +6,7 @@ import { Spinner } from './Spinner';
 interface BookingModalProps {
   lot: ParkingLot;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (hours: number, totalPrice: number) => void;
   isLoading: boolean;
 }
 
@@ -24,6 +24,10 @@ const modalVariants = {
 export const BookingModal: React.FC<BookingModalProps> = ({ lot, onClose, onConfirm, isLoading }) => {
   const [hours, setHours] = useState(1);
   const totalPrice = (lot.pricePerHour * hours).toFixed(2);
+
+  const handleConfirm = () => {
+    onConfirm(hours, parseFloat(totalPrice));
+  };
 
   return (
     <motion.div 
@@ -49,7 +53,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, onClose, onConf
         <div className="space-y-4 text-slate-700 mb-6">
             <div className="flex justify-between items-center">
                 <span className="font-medium">Location:</span>
-                <span>{lot.address}</span>
+                <span className="text-right">{lot.address}</span>
             </div>
              <div className="flex justify-between items-center">
                 <span className="font-medium">Hourly Rate:</span>
@@ -83,7 +87,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, onClose, onConf
             Cancel
           </button>
           <button 
-            onClick={onConfirm} 
+            onClick={handleConfirm} 
             className="w-full bg-brand-blue text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition flex justify-center items-center disabled:bg-blue-400"
             disabled={isLoading}
           >

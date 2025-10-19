@@ -1,61 +1,75 @@
-import React, { useState } from 'react';
-import { CarIcon, GoogleIcon, UserCircleIcon, SpinnerIcon } from './Icons';
+
+import React from 'react';
+import { motion } from 'framer-motion';
+import { LogoIcon, UserIcon, GoogleIcon, SpinnerIcon } from './Icons';
+// FIX: Import the shared 'Page' type to ensure type consistency with the parent component.
+import type { Page } from '../types';
 
 interface HeaderProps {
-    isLoggedIn: boolean;
-    onLogin: () => void;
-    onLogout: () => void;
+  isAuthenticated: boolean;
+  isAuthLoading: boolean;
+  onSignIn: () => void;
+  onSignOut: () => void;
+  onNavigate: (page: Page) => void;
+  currentPage: Page;
 }
 
-export const Header: React.FC<HeaderProps> = ({ isLoggedIn, onLogin, onLogout }) => {
-    const [isLoggingIn, setIsLoggingIn] = useState(false);
-    
-    // Simulate a network request for login
-    const handleLoginClick = () => {
-        setIsLoggingIn(true);
-        setTimeout(() => {
-            onLogin();
-            setIsLoggingIn(false);
-        }, 1000);
-    }
-
+export const Header: React.FC<HeaderProps> = ({ isAuthenticated, isAuthLoading, onSignIn, onSignOut, onNavigate, currentPage }) => {
   return (
-    <header className="bg-brand-dark/80 backdrop-blur-sm shadow-md sticky top-0 z-40">
-      <div className="container mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center">
-            <div className="text-brand-accent w-8 h-8 mr-3">
-            <CarIcon />
-            </div>
-            <h1 className="text-2xl font-bold text-white tracking-wide">
-            ParkPredict
-            </h1>
-        </div>
-        <div>
-            {isLoggedIn ? (
-                <div className="flex items-center gap-3">
-                    <span className="text-white hidden sm:inline">Welcome!</span>
-                    <UserCircleIcon className="w-8 h-8 text-slate-300" />
-                    <button onClick={onLogout} className="text-sm text-slate-300 hover:text-white transition">Sign Out</button>
-                </div>
-            ) : (
-                <button 
-                    onClick={handleLoginClick}
-                    className="flex items-center justify-center gap-2 bg-white text-slate-700 font-semibold py-2 px-4 rounded-lg hover:bg-slate-200 transition duration-200 w-[190px]"
-                    disabled={isLoggingIn}
+    <header className="bg-brand-dark/80 backdrop-blur-sm shadow-lg sticky top-0 z-40">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <button 
+            onClick={() => onNavigate('home')} 
+            className="flex items-center gap-2 text-white hover:opacity-80 transition-opacity"
+            aria-label="Go to homepage"
+          >
+            <LogoIcon className="w-8 h-8 text-brand-accent" />
+            <span className="text-xl font-bold tracking-tight">ParkPredict</span>
+          </button>
+          
+          <div className="flex items-center gap-4">
+            {isAuthenticated ? (
+              <div className="flex items-center gap-3">
+                 <motion.button
+                  onClick={() => onNavigate('profile')}
+                  className={`flex items-center gap-2 text-white p-2 rounded-full transition-colors ${currentPage === 'profile' ? 'bg-white/20' : 'hover:bg-white/10'}`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  aria-label="View profile"
                 >
-                    {isLoggingIn ? (
-                        <>
-                            <SpinnerIcon />
-                            <span>Signing in...</span>
-                        </>
-                    ) : (
-                        <>
-                            <GoogleIcon className="w-5 h-5" />
-                            Sign in with Google
-                        </>
-                    )}
+                  <UserIcon className="w-6 h-6" />
+                  <span className="hidden sm:inline font-medium">Welcome!</span>
+                </motion.button>
+                <button
+                  onClick={onSignOut}
+                  className="bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-slate-500 transition text-sm"
+                >
+                  Sign Out
                 </button>
+              </div>
+            ) : (
+              <motion.button
+                onClick={onSignIn}
+                disabled={isAuthLoading}
+                className="bg-white text-brand-dark font-semibold py-2 px-4 rounded-lg hover:bg-slate-200 transition flex items-center gap-2"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {isAuthLoading ? (
+                    <>
+                        <SpinnerIcon />
+                        <span>Signing in...</span>
+                    </>
+                ) : (
+                    <>
+                        <GoogleIcon className="w-5 h-5" />
+                        <span>Sign in with Google</span>
+                    </>
+                )}
+              </motion.button>
             )}
+          </div>
         </div>
       </div>
     </header>

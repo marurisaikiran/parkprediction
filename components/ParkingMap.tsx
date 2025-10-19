@@ -205,10 +205,24 @@ export const ParkingMap: React.FC<ParkingMapProps> = ({ lots, hoveredLotId, onMa
             }
             .marker-price-tag.hovered {
                 background-color: #0052FF;
-                transform: scale(1.2);
                 border-color: #FFC107;
                 cursor: pointer;
                 z-index: 10;
+                animation: pulse 1.5s infinite ease-in-out;
+            }
+            @keyframes pulse {
+                0% {
+                    transform: scale(1.1);
+                    box-shadow: 0 0 0 0px rgba(0, 82, 255, 0.7);
+                }
+                50% {
+                    transform: scale(1.25);
+                    box-shadow: 0 0 0 8px rgba(0, 82, 255, 0);
+                }
+                100% {
+                    transform: scale(1.1);
+                    box-shadow: 0 0 0 0px rgba(0, 82, 255, 0);
+                }
             }
         `}</style>
         <div ref={mapRef} style={{ width: '100%', height: '100%' }} />

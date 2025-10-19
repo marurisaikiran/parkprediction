@@ -9,7 +9,8 @@ interface InfoCardProps {
 
 const cardVariants = {
     hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: 'easeOut' } },
+    // FIX: Added 'as const' to the transition 'ease' property to ensure TypeScript infers the literal type required by framer-motion.
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: 'easeOut' as const } },
 };
 
 export const InfoCard: React.FC<InfoCardProps> = ({ icon, title, message }) => {

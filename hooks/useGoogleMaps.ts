@@ -71,7 +71,7 @@ export const useGoogleMaps = (apiKey: string) => {
 
     const handleError = () => {
       // If gm_authFailure was not called, it's a different kind of error (e.g., network).
-      // FIX: Use a ref to get the current status to avoid a stale closure. This prevents overwriting a more specific error from gm_authFailure.
+      // Use a ref to get the current status to avoid a stale closure. This prevents overwriting a more specific error from gm_authFailure.
       if (statusRef.current !== ScriptStatus.ERROR) {
         const errorMessage = "Failed to load the Google Maps script. Please check the network connection.";
         setError(errorMessage);

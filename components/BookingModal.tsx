@@ -17,7 +17,8 @@ const backdropVariants = {
 
 const modalVariants = {
     hidden: { opacity: 0, scale: 0.95, y: 50 },
-    visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', damping: 25, stiffness: 300 } },
+    // FIX: Added 'as const' to the transition 'type' property to satisfy framer-motion's strict type requirements.
+    visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring' as const, damping: 25, stiffness: 300 } },
     exit: { opacity: 0, scale: 0.9, y: -50, transition: { duration: 0.2 } },
 };
 

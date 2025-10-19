@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Header } from './components/Header';
@@ -23,8 +22,9 @@ const pageVariants = {
 };
 
 const pageTransition = {
-  type: 'tween',
-  ease: 'anticipate',
+  // FIX: Added 'as const' to help TypeScript infer the correct literal types for framer-motion's Transition properties, resolving a type error.
+  type: 'tween' as const,
+  ease: 'anticipate' as const,
   duration: 0.5,
 };
 

@@ -60,7 +60,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ bookings, onNavigate }) => {
                       initial={{ opacity: 0, y: -20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: -50 }}
-                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                      transition={{ type: 'spring' as const, stiffness: 300, damping: 30 }}
                       className="border-b border-slate-200 last:border-b-0 pb-4 last:pb-0"
                     >
                       <h3 className="font-bold text-brand-dark">{booking.lotName}</h3>

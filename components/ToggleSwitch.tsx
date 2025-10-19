@@ -7,7 +7,8 @@ interface ToggleSwitchProps {
 }
 
 const spring = {
-  type: 'spring',
+  // FIX: Added 'as const' to the transition 'type' property to resolve a TypeScript error with framer-motion's Transition type.
+  type: 'spring' as const,
   stiffness: 700,
   damping: 30
 };

@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { SearchBar } from './components/SearchBar';
@@ -9,15 +8,15 @@ import { BookingModal } from './components/BookingModal';
 import { ParkingListItemSkeleton } from './components/ParkingListItemSkeleton';
 import { fetchParkingPredictions } from './services/geminiService';
 import { useGoogleMaps } from './hooks/useGoogleMaps';
-import { ExclamationCircleIcon, SearchIcon, MapPinIcon } from './components/Icons';
-// FIX: Import the shared 'Page' type for consistent navigation handling.
+import { ExclamationCircleIcon, MapPinIcon } from './components/Icons';
 import type { ParkingLot, Page } from './types';
+import ErrorBanner from './components/ErrorBanner';
+import MapSkeleton from './components/MapSkeleton';
 
 const API_KEY = process.env.API_KEY || '';
 
 interface HomePageProps {
   onAddBooking: (lot: ParkingLot, duration: number, cost: number) => void;
-  // FIX: Use the shared 'Page' type for the onNavigate prop.
   onNavigate: (page: Page) => void;
 }
 
@@ -39,7 +38,20 @@ const HomePage: React.FC<HomePageProps> = ({ onAddBooking, onNavigate }) => {
     try {
       const data = await fetchParkingPredictions(query);
       if (Array.isArray(data)) {
-        setParkingLots(data);
+        // FIX: Add robust data validation to prevent crashes from malformed API responses.
+        // Filter out any lots that are missing critical information like name or price.
+        const validatedLots = data.filter(lot =>
+          lot &&
+          typeof lot.name === 'string' &&
+          typeof lot.pricePerHour === 'number'
+        );
+        
+        if (validatedLots.length < data.length) {
+          console.warn("Filtered out some invalid parking lot data received from the API.");
+        }
+        
+        setParkingLots(validatedLots);
+
       } else {
         throw new Error("Received invalid data from the AI service.");
       }
@@ -123,35 +135,38 @@ const HomePage: React.FC<HomePageProps> = ({ onAddBooking, onNavigate }) => {
       </section>
 
       <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="lg:order-2 h-[400px] lg:h-auto rounded-xl shadow-lg overflow-hidden">
-            {isMapLoaded ? (
-              <ParkingMap 
-                lots={parkingLots} 
-                hoveredLotId={hoveredLotId}
-                onMarkerClick={setSelectedLot}
-                onMarkerHover={setHoveredLotId}
-                panToLot={panToLot}
-              />
-            ) : (
-              <div className="w-full h-full bg-slate-700 flex flex-col justify-center items-center text-white">
-                {mapError ? (
-                  <div className="text-center p-4">
-                    <ExclamationCircleIcon className="w-12 h-12 mx-auto text-red-400 mb-4" />
-                    <h3 className="font-bold text-lg mb-2">Map Error</h3>
-                    <p className="text-sm text-slate-300">{mapError}</p>
-                  </div>
-                ) : (
-                  <>
-                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-t-transparent border-brand-blue mb-4"></div>
-                    <p>Loading Map...</p>
-                  </>
-                )}
-              </div>
-            )}
+        {mapError ? (
+          // Map failed to load: Show a single-column, list-first layout
+          <div>
+            <ErrorBanner
+              title="Map is Currently Unavailable"
+              message={`${mapError} However, you can still search for and book parking using the list below.`}
+            />
+            <div className="mt-8">
+              {renderContent()}
+            </div>
           </div>
-          <div className="lg:order-1">{renderContent()}</div>
-        </div>
+        ) : (
+          // Map is available or loading: Show the two-column grid layout
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="lg:order-2 h-[400px] lg:h-auto rounded-xl shadow-lg overflow-hidden bg-slate-200">
+              {!isMapLoaded ? (
+                <MapSkeleton />
+              ) : (
+                <ParkingMap 
+                  lots={parkingLots} 
+                  hoveredLotId={hoveredLotId}
+                  onMarkerClick={setSelectedLot}
+                  onMarkerHover={setHoveredLotId}
+                  panToLot={panToLot}
+                />
+              )}
+            </div>
+            <div className="lg:order-1">
+              {renderContent()}
+            </div>
+          </div>
+        )}
       </div>
       
       <AnimatePresence>
